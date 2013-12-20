@@ -7,6 +7,7 @@ use Cpanel::Form            ();
 use Whostmgr::HTMLInterface ();
 use Whostmgr::ACLS          ();
 use Cpanel::CachedDataStore;
+use CLI;
 
 print "Content-type: text/html\r\n\r\n";
 
@@ -43,7 +44,26 @@ if ($FORM{account}) {
 } else {
     Whostmgr::HTMLInterface::defheader( "default Server Configuration",'', '/cgi/addon_cgpnewsletter_servers_edit.cgi' );
 }
-    
+
+if ($settings->{cgprohost} && $settings->{cgproport} && $settings->{cgprouser} && $settings->{cgpropass}) {
+    my $cli = new CGP::CLI({
+	PeerAddr => $settings->{cgprohost},
+	PeerPort => $settings->{cgproport},
+	login => $settings->{cgprouser},
+	password => $settings->{cgpropass}
+			   });
+    unless($cli) {
+	print "Can't login to CGPro: ".$CGP::ERR_STRING,"\n";
+    } else {
+	if ($FORM{'max'} && $FORM{'per'}) {
+	    $cli->UpdateServerAccountDefaults({"MailOutFlow" => [$FORM{'max'}, $FORM{'per'}]});
+	}
+	my $def = $cli->GetServerAccountDefaults();
+	if ($def) {$settings->{max} = $def->{'MailOutFlow'}};
+	$cli->Logout();
+    }
+}
+
 Cpanel::Template::process_template(
     'whostmgr',
     {

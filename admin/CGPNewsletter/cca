@@ -1,0 +1,29 @@
+#!/usr/local/cpanel/3rdparty/bin/perl
+
+use strict;
+use Cpanel::AdminBin::Serializer ();
+use Cpanel::Logger               ();
+use Cpanel::PwCache              ();
+use Cpanel::CachedDataStore      ();
+use Cpanel::DnsUtils;
+
+my $stdin = <STDIN>;
+chomp $stdin;
+my ( $uid, $function, $data ) = split( / /, $stdin, 3 );
+
+# sanitize the input; in this case, only alphanumeric, underscore, space, period, and exclamation are allowed
+$data =~ s/![\w \.\!]//g;
+
+# make a note in the logs!
+my $user   = ( Cpanel::PwCache::getpwuid($uid) )[0];
+my $logger = Cpanel::Logger->new();
+
+if ( $function eq 'GETLOGIN' ) {
+    my $conf = Cpanel::CachedDataStore::fetch_ref( '/var/cpanel/cgpnewsletetr.yaml' ) || {};
+    $conf = $conf->{"users"}->{$data} if $conf->{"users"}->{$data};
+    print $conf->{cgprohost} , "::" , $conf->{cgproport} , "::" , $conf->{cgprouser} , "::" , $conf->{cgpropass};
+    exit(0);
+}
+
+1;
+

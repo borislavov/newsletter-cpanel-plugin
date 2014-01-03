@@ -9,9 +9,8 @@
 <cpanelfeature cgpro_groupware>
 <div class="h1Title"><div class="spriteicon_img_mini" id="icon-manageaccounts_mini"></div> <cpanel langprint="CGNNewsletter"></div>
 
-	<!--
-	   <cpanel CGPNewsletter="AddAccount($RAW_FORM{'email'},$RAW_FORM{'password'},$RAW_FORM{'quota'},$RAW_FORM{'domain'},$RAW_FORM{'realname'})">
-	-->
+<p><?cp CGPNewsletter::AddAccount(%,msg) email=$FORM{'email'},password=$FORM{'password'},quota=$FORM{'quota'},domain=$FORM{'domain'},realname=$FORM{'realname'} ?></p>
+
 <cpanelif !$CPERROR{'cgpro'}>
 	<h2><cpanel langprint="EAdocreated"></h2>
 	<p<cptext 'The email account “[output,class,_1,status]” was successfully [boolean,_2,created,modified,removed].',"$FORM{'email'}@$FORM{'domain'}",1></p>

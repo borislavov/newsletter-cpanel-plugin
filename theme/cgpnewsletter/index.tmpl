@@ -1,0 +1,132 @@
+<h2>[% locale.maketext('CGNAccounts') %]</h2>
+
+<script type='text/javascript' src="[% MagicRevision('/yui/tabview/tabview.js') %]"></script>
+<table border="0" cellpadding="5" width="550" cellspacing="0" id="mailtbl" class="sortable truncate-table">
+  <tr>
+    <th class="sorttable_nosort">[% locale.maketext("CGNAccount") %]</th>
+    <th class="sorttable_nosort">[% locale.maketext("CGNActions") %]</th>
+  </tr>
+  [% FOR account IN accounts.keys.sort -%]
+  <tr class="row-[% loop.count % 2 ? 'odd' : 'even' %]">
+    <td class="truncate">[% account %]</td>
+    <td style="text-align: center; white-space: nowrap;">
+      <table class="table_email_accts_actions">
+	<tr>
+	  <td><span class="action_link" onclick="toggle_action_div(null, {id:'change_password_module_[% loop.count - 1 %]', index:[% loop.count - 1 %], action:'delete'})">[% locale.maketext('CGNChangePassword') %]</span></td>
+	  <td><span class="action_link" onclick="toggle_action_div(null, {id:'change_quota_module_[% loop.count - 1 %]', index:[% loop.count - 1 %], action:'delete'})">[% locale.maketext('CGNChangeQuota') %]</span></td>
+	  <td><a href="#" onclick="toggle_action_div(null, {id:'delete_module_[% loop.count - 1 %]', index:[% loop.count - 1 %], action:'delete'})">[% locale.maketext('BrandingDPackage') %]</a></td>
+	</tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="padding: 0; border: none;">
+      <!-- Change Password -->
+      <div style="display: none;" class="user-section" id="change_password_module_[% loop.count - 1 %]">
+	<div class="clear"></div>
+	<form action="dopasswdpop.html" method="post">
+	  <table style="text-align: center; margin: 0px auto">
+	    <tbody>
+	      <tr>
+		<td width="33%" style="text-align: right">[% locale.maketext("CGNPassword") %]:</td>
+		<td width="33%">
+		  <input type="password" style="width: 150px" id="change_password_input_1_[% loop.count - 1 %]" name="password" />
+		</td>
+		<td width="33%" style="text-align: left">
+		  <span style="width: 16px; height: 16px;" id="change_password_input_1_[% loop.count - 1 %]_error" class="cjt_validation_error">
+		  </span>
+		</td>
+	      </tr>
+	      <tr>
+		<td style="text-align: right">[% locale.maketext("CGNPasswordAgain") %]:</td>
+		<td>
+		  <input type="password" style="width: 150px" id="change_password_input_2_[% loop.count - 1 %]" name="password2" />
+		</td>
+		<td style="text-align: left">
+		  <span style="width: 16px; height: 16px;" id="change_password_input_2_[% loop.count - 1 %]_error" class="cjt_validation_error">
+		  </span>
+		</td>
+	      </tr>
+	      <tr>
+		<td style="text-align: right">[% locale.maketext("CGNStrenth") %]:</td>
+		<td>
+		  <center>
+		    <div style="width: 150px; height: 20px; border: 1px solid black" id="password_strength_bar_[% loop.count - 1 %]"></div>
+		  </center>
+		</td>
+		<td style="text-align: left">
+		  <input type="button" value="[% locale.maketext("CGNPasswordGenerator") %]" id="create_strong_password_[% loop.count - 1 %]" tabindex="-1" class="input-button">
+		</td>
+	      </tr>
+	      <tr>
+		<td colspan="3">
+		  <div style="height: 8px">&nbsp;</div>
+		  <div id="change_password_input_[% loop.count - 1 %]">
+		    <input type="hidden" name="email" value="[% account.split('@').0 %]" />
+		    <input type="hidden" name="domain" value="[% account.split('@').1 %]" />
+		    <a href="javascript:toggle_action_div(null, {id:'change_password_module_[% loop.count - 1 %]', index:[% loop.count - 1 %], action:'change_password'})">[% locale.maketext("CGNcancel") %]</a> [% locale.maketext("CGNor") %]
+		    <input type="submit" id="email_table_change_password_confirm_[% loop.count - 1 %]" value="[% locale.maketext("CGNChangePassword") %]" class="input-button">
+		  </div>
+		  <div id="change_password_status_[% loop.count - 1 %]">
+		  </div>
+		</td>
+	      </tr>
+	    </tbody>
+	  </table>
+	</form>
+      </div>
+      <!-- END Change Password -->
+      <!-- Change Quota -->
+      <div style="display: none;" class="user-section" id="change_quota_module_[% loop.count - 1 %]">
+	<form action="doeditquota.html" method="post">
+	  <table style="margin: 0px auto; width: 100%;">
+	    <tbody>
+	      <tr>
+	      <tr>
+		<td width="45%" style="text-align: right">[% locale.maketext("CGNMailboxQuota") %]: </td>
+		<td width="55%" style="text-align: left">
+		  <input type="text" value="[% accounts.$account.quota %]" maxlength="4" size="4" name="quota" id="quota_number_input_[% loop.count - 1 %]"> <span class="megabyte_font">MB</span> <span id="quota_number_input_[% loop.count - 1 %]_error" style="width: 16px; height: 16px;" class="cjt_validation_error">
+		  </span>
+		</td>
+	      </tr>
+	      <tr>
+		<td style="text-align: center" colspan="2">
+		  <div style="height: 4px">&nbsp;</div>
+		  <div id="change_quota_input_[% loop.count - 1 %]">
+		    <input type="hidden" name="email" value="[% account.split('@').0 %]" />
+		    <input type="hidden" name="domain" value="[% account.split('@').1 %]" />
+		    <a href="javascript:toggle_action_div(null, {id:'change_quota_module_[% loop.count - 1 %]', index:[% loop.count - 1 %], action:'change_quota'})">[% locale.maketext("CGNcancel") %]</a> [% locale.maketext("CGNor") %]
+		    <input type="submit" id="change_quota_confirm_[% loop.count - 1 %]" value="[% locale.maketext("CGNChangeQuota") %]" class="input-button">
+		  </div>
+		  <div id="change_quota_status_[% loop.count - 1 %]">
+		  </div>
+		</td>
+	      </tr>
+	    </tbody>
+	  </table>
+	</form>
+      </div>
+      <!-- END Change Quota -->
+     <!-- Delete -->
+      <div style="display: none" class="dt_module user-section" id="delete_module_[% loop.count - 1 %]">
+	<div style="margin: 0px auto; padding: 8px 0px; text-align: center">
+	  <p>[% locale.maketext("CGNDeleteAccount") %] <em class="status">[% account %]</em>?</p>
+	  <p>
+	    <a href="javascript:toggle_action_div(null, {id:'delete_module_[% loop.count - 1 %]', index:[% loop.count - 1 %], action:'delete'})">[% locale.maketext("CGNcancel") %]</a> [% locale.maketext("CGNor") %]
+	    <a class="create-button" href="realdelpop.html?domain=[% account.split('@').1 %]&amp;email=[% account.split('@').0 %]">[% locale.maketext("CGNDelete") %]</a>        
+	  </p>
+	</div>
+      </div>
+      <!-- END Delete -->
+    </td>
+  </tr>
+  [% END -%]
+</table>
+<script type="text/javascript">
+var ACCOUNT = '[% FORM.account %]';
+[% FOREACH account IN accounts.keys.sort -%]
+  ACCOUNTS[[% loop.count - 1 %]] = [];
+  ACCOUNTS[[% loop.count - 1 %]]['domain'] = '[% account.split('@').1 -%]';
+  ACCOUNTS[[% loop.count - 1 %]]['user'] = '[% account.split('@').0 -%]';
+[% END -%]
+</script>

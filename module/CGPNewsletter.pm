@@ -46,6 +46,7 @@ sub getCLI {
 	unless($cli) {
 	    $logger->warn("Can't login to CGPro: ".$CGP::ERR_STRING);
 	}
+	$cli->{'loginData'} = \@loginData;
 	$CLI = $cli;
 	return $cli;
     }
@@ -97,6 +98,8 @@ sub api2_ListAccounts {
 	    my $diskquota = @$accountData{'MaxAccountSize'} || '';
 	    $diskquota =~ s/M//g;
 	    $accounts->{"$userName\@$domain"}->{'quota'} = $diskquota;
+	    $accounts->{"$userName\@$domain"}->{'server'} = $cli->{'loginData'}->[0];
+	    $accounts->{"$userName\@$domain"}->{'server'} = $ENV{'HTTP_HOST'} if $cli->{'loginData'}->[0] eq '0' ||  $cli->{'loginData'}->[0] =~ /^127\.0/ ||  ! $cli->{'loginData'}->[0] ||  $cli->{'loginData'}->[0] eq 'localhost';
 	}
     }
     $cli->Logout();

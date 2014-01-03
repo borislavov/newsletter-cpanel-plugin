@@ -15,6 +15,7 @@
 	  <td><span class="action_link" onclick="toggle_action_div(null, {id:'change_password_module_[% loop.count - 1 %]', index:[% loop.count - 1 %], action:'delete'})">[% locale.maketext('CGNChangePassword') %]</span></td>
 	  <td><span class="action_link" onclick="toggle_action_div(null, {id:'change_quota_module_[% loop.count - 1 %]', index:[% loop.count - 1 %], action:'delete'})">[% locale.maketext('CGNChangeQuota') %]</span></td>
 	  <td><a href="#" onclick="toggle_action_div(null, {id:'delete_module_[% loop.count - 1 %]', index:[% loop.count - 1 %], action:'delete'})">[% locale.maketext('BrandingDPackage') %]</a></td>
+	  <td><a href="#" onclick="toggle_action_div(null, {id:'client_module_[% loop.count - 1 %]', index:[% loop.count - 1 %], action:'delete'})">[% locale.maketext('CGNConfigureEmailClient') %]</a></td>
 	</tr>
       </table>
     </td>
@@ -118,6 +119,74 @@
 	</div>
       </div>
       <!-- END Delete -->
+      <!-- Client -->
+      <div style="display: none" class="dt_module user-section" id="client_module_[% loop.count - 1 %]">
+	<div id="manual_settings_area">
+	  <div id="ssl_settings_area" class="vertical_half preferred-selection">
+	    <div class="caption">Secure SSL/TLS Settings</div>
+	    <div class="caption">(Recommended)</div>
+	    <table class="manual_settings_table">
+	      <tbody>
+		<tr>
+		  <td><strong>Username:</strong></td>
+		  <td class="data">[% account || '&lt;your.email@address&gt;' %]</td>
+		</tr>
+		<tr>
+		  <td><strong>Password:</strong></td>
+		  <td class="escape-note"><em>( Use the email account’s password. )</em></td>
+		</tr>
+		<tr>
+		  <td><strong>Incoming Server:</strong></td>
+		  <td class="data">
+		    [% accounts.$account.server %] <br />
+		    IMAP Port: 143 <br />
+		    POP3 Port: 110
+		  </td>
+		</tr>
+		<tr>
+		  <td><strong>Outgoing Server:</strong></td>
+		  <td class="data">
+		    [% accounts.$account.server %] <br />
+		    SMTP Port: 25
+		  </td>
+		</tr>
+	      </tbody>
+	    </table>
+	  </div>
+	  <div class="vertical_half" id="non_ssl_settings_area">
+	    <div class="caption">Non-SSL Settings</div>
+	    <div class="caption not-recommended">(NOT Recommended)</div>
+	    <table class="manual_settings_table">
+	      <tbody>
+		<tr>
+		  <td><strong>Username:</strong></td>
+		  <td class="data">[% account || '&lt;your.email@address&gt;' %]</td>
+		</tr>
+		<tr>
+		  <td><strong>Password:</strong></td>
+		  <td class="escape-note"><em>( Use the email account’s password. )</em></td>
+		</tr>
+		<tr>
+		  <td><strong>Incoming Server:</strong></td>
+		  <td class="data">
+		    [% accounts.$account.server %] <br />
+		    IMAP Port: 993 <br />
+		    POP3 Port: 995
+		  </td>
+		</tr>
+		<tr>
+		  <td><strong>Outgoing Server:</strong></td>
+		  <td class="data">
+		    [% accounts.$account.server %] <br />
+		    SMTP Port: 465
+		  </td>
+		</tr>
+	      </tbody>
+	    </table>
+	  </div>
+	</div>
+      </div>
+      <!-- END Client -->
     </td>
   </tr>
   [% END -%]

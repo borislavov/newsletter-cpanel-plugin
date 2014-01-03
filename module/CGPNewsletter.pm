@@ -93,6 +93,7 @@ sub api2_ListAccounts {
     foreach my $domain (@domains) {
 	my $domainAccounts = $cli->ListAccounts($domain);
 	foreach my $userName (sort keys %$domainAccounts) {      
+	    next if $userName eq 'pbx' ||  $userName eq 'ivr';
 	    my $accountData = $cli->GetAccountEffectiveSettings("$userName\@$domain");
 	    $accounts->{"$userName\@$domain"} = $accountData;
 	    my $diskquota = @$accountData{'MaxAccountSize'} || '';

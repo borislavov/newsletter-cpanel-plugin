@@ -1,4 +1,5 @@
-<h2>[% locale.maketext('CGNAccounts') %]</h2>
+[% IF accounts.keys.size -%]
+<h2>[% locale.maketext('CGNAccount') %]</h2>
 
 <script type='text/javascript' src="[% MagicRevision('/yui/tabview/tabview.js') %]"></script>
 <table border="0" cellpadding="5" width="550" cellspacing="0" id="mailtbl" class="sortable truncate-table">
@@ -199,3 +200,10 @@ var ACCOUNT = '[% FORM.account %]';
   ACCOUNTS[[% loop.count - 1 %]]['user'] = '[% account.split('@').0 -%]';
 [% END -%]
 </script>
+[% ELSE -%]
+<div align="right">
+  <form method="get" action="add_account.html">
+    <input type="submit" class="input-button" value="[% locale.maketext("CGNAddNewsletter") %]">
+  </form>
+</div>
+[% END -%]

@@ -2,7 +2,7 @@
  eval 'if [ -x /usr/local/cpanel/3rdparty/bin/perl ]; then exec /usr/local/cpanel/3rdparty/bin/perl -x -- $0 ${1+"$@"}; else exec /usr/bin/perl -x $0 ${1+"$@"}; fi;'
     if 0;
 #!/usr/bin/perl
-#WHMADDON:appname:CGPnewsletter <strong>Servers</strong>
+#WHMADDON:appname:cMailPro <strong>Newsletter Servers</strong>
 
 use Cpanel::Form            ();
 use Whostmgr::HTMLInterface ();
@@ -20,7 +20,7 @@ if ( !Whostmgr::ACLS::hasroot() ) {
 my $conf = Cpanel::CachedDataStore::fetch_ref( '/var/cpanel/cgpnewsletetr.yaml' ) || {};
 
 my %FORM = Cpanel::Form::parseform();
-Whostmgr::HTMLInterface::defheader( "CGPro Newsletter Servers",'', '/cgi/addon_cgpnewsletter_servers.cgi' );
+Whostmgr::HTMLInterface::defheader( "cMailPro Newsletter Servers",'', '/cgi/addon_cgpnewsletter_servers.cgi' );
 
 Cpanel::Template::process_template(
     'whostmgr',

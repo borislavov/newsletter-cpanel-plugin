@@ -56,6 +56,7 @@ do
         else
             sed -i -e '/^CGN/d' ${TARGET}
         fi
+        sed -i -e '/^$/d' ${TARGET}
 	echo >> ${TARGET}
         cat ${LOCALES[$j]} >> ${TARGET}
     done

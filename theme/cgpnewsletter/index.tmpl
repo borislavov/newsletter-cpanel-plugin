@@ -5,11 +5,13 @@
 <table border="0" cellpadding="5" width="550" cellspacing="0" id="mailtbl" class="sortable truncate-table">
   <tr>
     <th class="sorttable_nosort">[% locale.maketext("CGNAccount") %]</th>
+    <th class="sorttable_nosort">[% locale.maketext("CGNMaximumOutgoingEmails") %]</th>
     <th class="sorttable_nosort">[% locale.maketext("CGNActions") %]</th>
   </tr>
   [% FOR account IN accounts.keys.sort -%]
   <tr class="row-[% loop.count % 2 ? 'odd' : 'even' %]">
     <td class="truncate">[% account %]</td>
+    <td class="truncate">[% accounts.$account.MailOutFlow.0 %]/[% accounts.$account.MailOutFlow.1 %]</td>
     <td style="text-align: center; white-space: nowrap;">
       <table class="table_email_accts_actions">
 	<tr>

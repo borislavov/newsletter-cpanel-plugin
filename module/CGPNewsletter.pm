@@ -99,6 +99,7 @@ sub api2_ListAccounts {
 	    my $diskquota = @$accountData{'MaxAccountSize'} || '';
 	    $diskquota =~ s/M//g;
 	    $accounts->{"$userName\@$domain"}->{'quota'} = $diskquota;
+	    $accounts->{"$userName\@$domain"}->{'MailOutFlow'} = $accountData->{"MailOutFlow"};
 	    $accounts->{"$userName\@$domain"}->{'server'} = $cli->{'loginData'}->[0];
 	    $accounts->{"$userName\@$domain"}->{'server'} = $ENV{'HTTP_HOST'} if $cli->{'loginData'}->[0] eq '0' ||  $cli->{'loginData'}->[0] =~ /^127\.0/ ||  ! $cli->{'loginData'}->[0] ||  $cli->{'loginData'}->[0] eq 'localhost';
 	}

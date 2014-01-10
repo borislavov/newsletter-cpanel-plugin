@@ -63,6 +63,7 @@ do
         else
             sed -i -e '/^CGN/d' ${TARGET}
         fi
+	echo >> ${TARGET}
         cat ${LOCALES[$j]} >> ${TARGET}
     done
 done

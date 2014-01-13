@@ -14,7 +14,9 @@
 <cpanelif !$CPERROR{'cgpro'}>
 	<h2><cpanel langprint="EAdocreated"></h2>
 	<p<cptext 'The email account “[output,class,_1,status]” was successfully [boolean,_2,created,modified,removed].',"$FORM{'email'}@$FORM{'domain'}",1></p>
-</cpanelif>
+		  <p><cptext 'CGNNewsletterDescriptionCreated1'></p>
+		  <p><cptext 'CGNNewsletterDescriptionCreated2'></p>
+		  </cpanelif>
 
 <cpanelif $CPERROR{'cgpro'}>
 	<p class="errors">

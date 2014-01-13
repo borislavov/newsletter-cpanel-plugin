@@ -214,7 +214,8 @@ LANG.local_extension_input_invalid = "<cptext 'CGPLocalExtensionInvalid','{min}'
 <div class="body-content">
   <cpanelfeature cgpnewsletter_newsletter>
   <h1><cpanel langprint="CGNNewsletter"></h1>
-  <p><cptext "Some description of newsletter!"></p>
+  <!-- <?cp CGPNewsletter::MailOutLimit(%,msg) ?>-->
+  <p><cptext "CGNNewsletterDescription", $CPVAR{'MaxMails'}></p>
   <?cptt CGPNewsletter::ListAccounts(cgpnewsletter/index.tmpl) ?>
   </cpanelfeature>
 </div><!-- end body-content div -->

@@ -12,7 +12,7 @@
   <tr class="row-[% loop.count % 2 ? 'odd' : 'even' %]">
     <td class="truncate">[% account %]</td>
     <td class="truncate">[% accounts.$account.MailOutFlow.0 %]/[% accounts.$account.MailOutFlow.1 %]</td>
-    <td style="text-align: center; white-space: nowrap;">
+    <td style="text-align: center;">
       <table class="table_email_accts_actions">
 	<tr>
 	  <td><span class="action_link" onclick="toggle_action_div(null, {id:'change_password_module_[% loop.count - 1 %]', index:[% loop.count - 1 %], action:'delete'})">[% locale.maketext('CGNChangePassword') %]</span></td>

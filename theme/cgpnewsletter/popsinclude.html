@@ -78,6 +78,14 @@ if (self['CPANEL']) {
 	<td></td>
 	<td colspan="3"><em><cptext 'value in MB or 0 for'> <span class="action_link" onclick="fill_unlimited()"><cptext 'unlimited'></span></em></td>
       </tr>
+      <tr>
+	<td align="right"><cpanel langprint="CGNMaximumOutgoingEmails">:</td>
+	<td>
+	  <strong><cpanel print="$CPVAR{'MaxMails'}">/<cpanel print="$CPVAR{'MaxPeriod}"></strong>
+	</td>
+	<td colspan="2"><div id="quota_error"></div></td>
+      </tr>
+      <tr>
     </table>
     <table border="0" style="margin-left: 5px; margin-top: 1em;">
       <tr>

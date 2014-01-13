@@ -74,8 +74,12 @@ sub api2_AddAccount {
 	    my $response = $cli->CreateAccount(accountName => $OPTS{'email'} . '@' . $domain, settings => $UserData);
 	    if ($response) {
 		$cli->CreateMailbox($OPTS{'email'} . '@' . $domain, "Spam");
-		my $settings = {};
-		$cli->UpdateAccountSettings($OPTS{'email'} . '@' . $domain, $settings);
+		if ( $Cpanel::CPVAR{'MaxMails'} && $Cpanel::CPVAR{'MaxPeriod'} && !$Cpanel::CPVAR{'MaxMailsDefault'}) {
+		    my $settings = {
+			"MailOutFlow" => [$Cpanel::CPVAR{'MaxMails'}, $Cpanel::CPVAR{'MaxPeriod'}]
+		    };
+		    $cli->UpdateAccountSettings($OPTS{'email'} . '@' . $domain, $settings);
+		}
 	    } else {
 		my $error = $cli->getErrMessage;
 		$Cpanel::CPERROR{'cgpro'} = $error;
@@ -173,6 +177,24 @@ sub api2_deleteAccount {
     $cli->Logout();
 }
 
+sub api2_MailOutLimit {
+    my %OPTS = @_;
+    my @domains = Cpanel::Email::listmaildomains();
+    my $account = $OPTS{'email'} . '@' . $OPTS{'domain'};
+    my $limit = [];
+    my $limits = Cpanel::CachedDataStore::fetch_ref( '/var/cpanel/cgpnewsletetr_packages.yaml');
+    $limit = $limits->{$Cpanel::CPDATA{'PLAN'}} if $limits->{$Cpanel::CPDATA{'PLAN'}};
+    unless ($limit->[0]) {
+	my $cli = getCLI();
+	my $def = $cli->GetServerAccountDefaults();
+	if ($def) {$limit = $def->{'MailOutFlow'}};
+	$Cpanel::CPVAR{'MaxMailsDefault'} = 1;
+	$cli->Logout();
+    }
+    $Cpanel::CPVAR{'MaxMails'} = $limit->[0] if $limit->[0];
+    $Cpanel::CPVAR{'MaxPeriod'} = $limit->[1] if $limit->[1];
+}
+
 sub api2 {
     my $func = shift;
     my (%API);
@@ -181,6 +203,7 @@ sub api2 {
     $API{'changePassword'} = {};
     $API{'editQuota'} = {};
     $API{'deleteAccount'} = {};
+    $API{'MailOutLimit'} = {};
     return ( \%{ $API{$func} } );
 }
 

@@ -61,7 +61,7 @@ do
         then
             echo "---" > ${TARGET}
         else
-            sed -i -e '/^CGN/d' ${TARGET}
+            sed -i -e '/^"*CGN/d' ${TARGET}
         fi
         sed -i -e '/^$/d' ${TARGET}
 	echo >> ${TARGET}

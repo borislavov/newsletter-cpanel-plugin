@@ -44,7 +44,7 @@ do
 
     for ((j=0; j<${lLen}; j++)); do
         TARGET=${THEMES[$i]}/locale/`basename ${LOCALES[$j]} '{}'`.yaml.local
-        sed -i -e '/^CGN/d' ${TARGET}
+        sed -i -e '/^"*CGN/d' ${TARGET}
     done
 done
 

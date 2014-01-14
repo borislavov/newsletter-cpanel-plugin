@@ -40,33 +40,37 @@ BASEDIR='/usr/local/cpanel/base/frontend';
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 THEMES=($(find ${BASEDIR} -maxdepth 1 -mindepth 1 -type d))
+LOCALES=($(find ${PACKSRC}/locale -maxdepth 1 -mindepth 1))
 IFS=$OLDIFS
 
 tLen=${#THEMES[@]}
-
-LOCALES=($(find ${PACKSRC}/locale -maxdepth 1 -mindepth 1))
 lLen=${#LOCALES[@]}
 
 for (( i=0; i<${tLen}; i++ ));
 do
-    rm -rf "${THEMES[$i]}/cgpnewsletter"
-    cp -r "${PACKSRC}/theme/cgpnewsletter" "${THEMES[$i]}/"
-    rm -f ${THEMES[$i]}/branding/cgpnewsletter_*
-    cp "${PACKSRC}/icons/"* "${THEMES[$i]}/branding"
-    cp "${PACKSRC}/plugin/dynamicui_cgpnewletter.conf" "${THEMES[$i]}/dynamicui/"
+    if [ -d "${THEMES[$i]}/dynamicui/" ]
+    then
+	rm -rf "${THEMES[$i]}/cgpnewsletter"
+	cp -r "${PACKSRC}/theme/cgpnewsletter" "${THEMES[$i]}/"
+	rm -f ${THEMES[$i]}/branding/cgpnewsletter_*
+	cp "${PACKSRC}/icons/"* "${THEMES[$i]}/branding"
+	cp "${PACKSRC}/plugin/dynamicui_cgpnewletter.conf" "${THEMES[$i]}/dynamicui/"
 
-    for ((j=0; j<${lLen}; j++)); do
-        TARGET=${THEMES[$i]}/locale/`basename ${LOCALES[$j]} '{}'`.yaml.local
-        if [ ! -f ${TARGET} ]
-        then
-            echo "---" > ${TARGET}
-        else
-            sed -i -e '/^"*CGN/d' ${TARGET}
-        fi
-        sed -i -e '/^$/d' ${TARGET}
-	echo >> ${TARGET}
-        cat ${LOCALES[$j]} >> ${TARGET}
-    done
+	for ((j=0; j<${lLen}; j++)); do
+            TARGET=${THEMES[$i]}/locale/`basename ${LOCALES[$j]} '{}'`.yaml.local
+            if [ ! -f ${TARGET} ]
+            then
+		echo "---" > ${TARGET}
+            else
+		sed -i -e '/^"*CGN/d' ${TARGET}
+            fi
+            if [ -f ${TARGET} ]
+            then
+		sed -i -e '/^$/d' ${TARGET}
+		echo >> ${TARGET}
+		cat ${LOCALES[$j]} >> ${TARGET}
+            fi
+	done
 done
 
 /usr/local/cpanel/bin/rebuild_sprites

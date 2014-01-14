@@ -29,23 +29,25 @@ BASEDIR='/usr/local/cpanel/base/frontend';
 SAVEIFS=$IFS
 IFS=$(echo -en "\n\b")
 THEMES=($(find ${BASEDIR} -maxdepth 1 -mindepth 1 -type d))
+LOCALES=($(find ${PACKSRC}/locale -maxdepth 1 -mindepth 1))
 IFS=$OLDIFS
 
 tLen=${#THEMES[@]}
-
-LOCALES=($(find ${PACKSRC}/locale -maxdepth 1 -mindepth 1))
 lLen=${#LOCALES[@]}
 
 for (( i=0; i<${tLen}; i++ ));
 do
-    rm -rf "${THEMES[$i]}/cgpnewsletter"
-    rm -f ${THEMES[$i]}/branding/cgpnewsletter_*
-    rm -f "${THEMES[$i]}/dynamicui/dynamicui_cgpnewletter.conf"
+    if [ -d "${THEMES[$i]}/dynamicui/" ]
+    then
+	rm -rf "${THEMES[$i]}/cgpnewsletter"
+	rm -f ${THEMES[$i]}/branding/cgpnewsletter_*
+	rm -f "${THEMES[$i]}/dynamicui/dynamicui_cgpnewletter.conf"
 
-    for ((j=0; j<${lLen}; j++)); do
-        TARGET=${THEMES[$i]}/locale/`basename ${LOCALES[$j]} '{}'`.yaml.local
-        sed -i -e '/^"*CGN/d' ${TARGET}
-    done
+	for ((j=0; j<${lLen}; j++)); do
+            TARGET=${THEMES[$i]}/locale/`basename ${LOCALES[$j]} '{}'`.yaml.local
+            sed -i -e '/^"*CGN/d' ${TARGET}
+	done
+    fi
 done
 
 /usr/local/cpanel/bin/rebuild_sprites

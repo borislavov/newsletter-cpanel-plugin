@@ -80,6 +80,7 @@ sub api2_AddAccount {
 		    };
 		    $cli->UpdateAccountSettings($OPTS{'email'} . '@' . $domain, $settings);
 		}
+		update_spf("addip");
 	    } else {
 		my $error = $cli->getErrMessage;
 		$Cpanel::CPERROR{'cgpro'} = $error;
@@ -171,6 +172,8 @@ sub api2_deleteAccount {
 		unless ($response) {
 		    $Cpanel::CPERROR{'email'} = $cli->getErrMessage;
 		}
+		update_spf("delip");
+		last;
 	    }
 	}
     }
@@ -205,6 +208,62 @@ sub api2 {
     $API{'deleteAccount'} = {};
     $API{'MailOutLimit'} = {};
     return ( \%{ $API{$func} } );
+}
+
+sub update_spf {
+    my $action = shift;
+    my $apiref = Cpanel::Api2::Exec::api2_preexec( 'SPFUI', 'installed' );
+    my ( $spf, undef ) = Cpanel::Api2::Exec::api2_exec( 'SPFUI', 'installed', $apiref );
+    if ($spf->[0]->{installed}) {
+	# Rebuild Form Data
+	$Cpanel::FORM{'overwrite'} = 1;
+	$Cpanel::FORM{'faction'} = "install";
+	# $Cpanel::FORM{'spf_ip4_hosts'} = "77.77.150.13";
+	# # SPFUI::load_current_values(%,status)
+	$apiref = Cpanel::Api2::Exec::api2_preexec( 'SPFUI', 'load_current_values' );
+	my ( undef, undef) = Cpanel::Api2::Exec::api2_exec( 'SPFUI', 'load_current_values', $apiref);
+	# SPFUI::list_settings()
+	$apiref = Cpanel::Api2::Exec::api2_preexec( 'SPFUI', 'list_settings' );
+	my ( $a, undef) = Cpanel::Api2::Exec::api2_exec( 'SPFUI', 'list_settings', $apiref, {settings => 'a_hosts'} );
+	for (my $i = 0; $i < scalar @{ $a }; $i++) {
+	    $Cpanel::FORM{'spf_a_hosts-' . $i} = $a->[$i]->{opt};
+	}
+	my ( $mx, undef) = Cpanel::Api2::Exec::api2_exec( 'SPFUI', 'list_settings', $apiref, {settings => 'mx_hosts'} );
+	for (my $i = 0; $i < scalar @{ $mx }; $i++) {
+	    $Cpanel::FORM{'spf_mx_hosts-' . $i} = $mx->[$i]->{opt};
+	}
+	my ( $include, undef) = Cpanel::Api2::Exec::api2_exec( 'SPFUI', 'list_settings', $apiref, {settings => 'include_hosts'} );
+	for (my $i = 0; $i < scalar @{ $include }; $i++) {
+	    $Cpanel::FORM{'spf_include_hosts-' . $i} = $include->[$i]->{opt};
+	}
+	# SPFUI::entries_complete()
+	$apiref = Cpanel::Api2::Exec::api2_preexec( 'SPFUI', 'entries_complete' );
+	my ( $complete, undef) = Cpanel::Api2::Exec::api2_exec( 'SPFUI', 'entries_complete', $apiref);
+	$Cpanel::FORM{'entries_complete'} = $complete->[0]->{'complete'};
+	my $server_ip = "";
+	# Add CGPro server to ip4
+	my $cli = getCLI();
+	if ($cli->{loginData}->[0] =~ /^\d+\.\d+\.\d+\.\d+\/?\d*$/) {
+	    $server_ip = $cli->{loginData}->[0];
+	} elsif ($cli->{loginData}->[0] =~ /^[\w\.\-]+$/) {
+	    $apiref = Cpanel::Api2::Exec::api2_preexec( 'DnsLookup', 'name2ip' );
+	    my ( $ip, undef) = Cpanel::Api2::Exec::api2_exec( 'DnsLookup', 'name2ip', $apiref, {domain => $cli->{loginData}->[0]});
+	    if  ($ip->[0]->{status} == 1) {
+		$server_ip = $ip->[0]->{ip};
+	    }
+	}
+	if ($action eq "addip") {
+	    $Cpanel::FORM{'spf_ip4_hosts'} = $server_ip;
+	}
+	my ( $ip4, undef) = Cpanel::Api2::Exec::api2_exec( 'SPFUI', 'list_settings', $apiref, {settings => 'ip4_hosts'} );
+	for (my $i = 0; $i < scalar @{ $ip4 }; $i++) {
+	    next if $action eq "delip" && $server_ip eq $ip4->[$i]->{opt};
+	    $Cpanel::FORM{'spf_ip4_hosts-' . $i} = $ip4->[$i]->{opt};
+	}
+	# Apply Changes
+	$apiref = Cpanel::Api2::Exec::api2_preexec( 'SPFUI', 'install' );
+	my @result = Cpanel::Api2::Exec::api2_exec( 'SPFUI', 'install', $apiref, {entries_complete => $complete->[0]->{'complete'}} );
+    }
 }
 
 1;

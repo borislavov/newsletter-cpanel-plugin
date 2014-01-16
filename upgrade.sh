@@ -23,6 +23,8 @@ chmod +x /usr/local/cpanel/whostmgr/docroot/cgi/addon_cgpnewsletter*
 
 # cPanel
 
+/usr/local/cpanel/bin/manage_hooks delete module CGPNewsletter::Hooks
+
 # Install cPanel CommuniGate Custom Module
 cp ${PACKSRC}/module/CGPNewsletter.pm /usr/local/cpanel/Cpanel/
 
@@ -72,6 +74,15 @@ do
             fi
 	done
 done
+
+# Install cPanel Function hooks
+if [ ! -d /var/cpanel/perl5/lib/ ]
+then
+    mkdir -p /var/cpanel/perl5/lib/
+fi
+rm -rf /var/cpanel/perl5/lib/CGPNewsletter
+cp -rf ${PACKSRC}/hooks/CGPNewsletter /var/cpanel/perl5/lib/
+/usr/local/cpanel/bin/manage_hooks add module CGPNewsletter::Hooks
 
 /usr/local/cpanel/bin/rebuild_sprites
 /usr/local/cpanel/bin/build_locale_databases

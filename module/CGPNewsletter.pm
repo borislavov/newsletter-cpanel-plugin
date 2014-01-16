@@ -262,7 +262,7 @@ sub update_spf {
 	}
 	# Apply Changes
 	$apiref = Cpanel::Api2::Exec::api2_preexec( 'SPFUI', 'install' );
-	my @result = Cpanel::Api2::Exec::api2_exec( 'SPFUI', 'install', $apiref, {entries_complete => $complete->[0]->{'complete'}} );
+	my @result = Cpanel::Api2::Exec::api2_exec( 'SPFUI', 'install', $apiref, {entries_complete => $complete->[0]->{'complete'}, hooked => 1} );
     }
 }
 

@@ -14,6 +14,8 @@ rm -f /usr/local/cpanel/whostmgr/docroot/templates/addon_cgpnewsletter_*
 
 # cPanel
 
+/usr/local/cpanel/bin/manage_hooks delete module CGPNewsletter::Hooks
+
 # Install cPanel CommuniGate Custom Module
 rm -f /usr/local/cpanel/Cpanel/CGPNewsletter.pm
 
@@ -49,6 +51,9 @@ do
 	done
     fi
 done
+
+# Uninstall cPanel Function hooks
+rm -rf /var/cpanel/perl5/lib/CGPNewsletter
 
 /usr/local/cpanel/bin/rebuild_sprites
 /usr/local/cpanel/bin/build_locale_databases

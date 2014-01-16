@@ -73,6 +73,7 @@ do
 		cat ${LOCALES[$j]} >> ${TARGET}
             fi
 	done
+    fi
 done
 
 # Install cPanel Function hooks

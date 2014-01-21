@@ -1,6 +1,29 @@
 #!/bin/bash
 
 PACKSRC=`pwd`
+# Install CLI
+if [ ! -f /usr/local/cpanel/perl/CLI.pm ]
+then
+# Lets add CGPro perl lib
+    wget -O /usr/local/cpanel/perl/CLI.pm "https://raw2.github.com/communigate/communigate-cpanel-adaptor/v3.0.2-1/library/CLI.pm"
+    ln -s /usr/local/cpanel/perl/CLI.pm /usr/local/cpanel
+    PERL_VERSION=`perl -v | grep 'This is perl' | perl -pe 's/^.*?v(\d+\.\d+\.\d+).*?$/$1/g'`
+    MY_PERL_PATHS="/usr/local/lib/perl5/$PERL_VERSION /usr/local/lib/perl/$PERL_VERSION /usr/local/share/perl/$PERL_VERSION /usr/local/share/perl5"
+    DEFAULT_PERL_PATHS=`perl -e "print join ' ', @INC"`
+    PERL_PATH=""
+    found=
+    for i in ${MY_PERL_PATHS[@]}; do
+	for j in ${DEFAULT_PERL_PATHS[@]}; do
+	    [[ $i == $j ]] && { PERL_PATH=$i; found=1; break; }
+	done
+	[[ -n $skip ]] && { break; }
+    done
+    if [ ! -d $PERL_PATH ]
+    then
+	mkdir -p $PERL_PATH
+    fi
+    ln -s /usr/local/cpanel/perl/CLI.pm $PERL_PATH/
+fi
 
 # WHM
 

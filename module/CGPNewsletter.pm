@@ -56,6 +56,10 @@ sub api2_AddAccount {
     my %OPTS = @_;
     my @domains = Cpanel::Email::listmaildomains();
     my $cli = getCLI();
+    if (isAccountBanned($cli)) {
+	$cli->Logout();
+	return;
+    };
     foreach my $domain (@domains) {
 	if ($domain eq $OPTS{'domain'}) {
 	    if ($OPTS{'quota'} == 0 || $OPTS{'quota'} eq 'unlimited') {
@@ -187,15 +191,42 @@ sub api2_MailOutLimit {
     my $limit = [];
     my $limits = Cpanel::CachedDataStore::fetch_ref( '/var/cpanel/cgpnewsletetr_packages.yaml');
     $limit = $limits->{$Cpanel::CPDATA{'PLAN'}} if $limits->{$Cpanel::CPDATA{'PLAN'}};
+    my $cli = getCLI();
     unless ($limit->[0]) {
-	my $cli = getCLI();
 	my $def = $cli->GetServerAccountDefaults();
 	if ($def) {$limit = $def->{'MailOutFlow'}};
 	$Cpanel::CPVAR{'MaxMailsDefault'} = 1;
-	$cli->Logout();
     }
+    $Cpanel::CPVAR{'banned'} = isAccountBanned($cli);
+    $cli->Logout();
     $Cpanel::CPVAR{'MaxMails'} = $limit->[0] if $limit->[0];
     $Cpanel::CPVAR{'MaxPeriod'} = $limit->[1] if $limit->[1];
+}
+
+sub isAccountBanned {
+    my $cli = shift;
+    my $user = $Cpanel::CPDATA{'USER'};
+    my @domains = Cpanel::Email::listmaildomains();
+    my $prefs = $cli->GetServerAccountPrefs();
+    my $banned = $prefs->{"NewsletterBanned"};
+    $banned =~ s/(\\r|\s)//g;
+    my @banned = split '\\\e', $banned;
+    my $banFound = 0;
+    for my $ban (@banned) {
+	if ($ban eq $user) {
+	    $banFound = 1;
+	    last;
+	} else {
+	    for my $domain (@domains) {
+		if ($ban eq $domain) {
+		    $banFound = 1;
+		    last;
+		}
+	    };
+	    last if $banFound;
+	}
+    }
+    return $banFound;
 }
 
 sub api2 {

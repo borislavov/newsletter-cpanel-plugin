@@ -3,11 +3,16 @@
 <cpanel Branding="include(stdheader.html)">
 <div class="body-content">
   <cpanelfeature cgpnewsletter_newsletter>
-  <h1><cpanel langprint="CGNNewsletter"></h1>
   <!-- <?cp CGPNewsletter::MailOutLimit(%,msg) ?>-->
+  <h1><cpanel langprint="CGNNewsletter"></h1>
+  <cpanelif $CPVAR{'banned'}==0>
   <form id="mainform" method="post" action="doadd_account.html" name="mainform">
     <cpanel include="popsinclude.html">
   </form>
+  </cpanelif>
+  <cpanelif $CPVAR{'banned'}==1>
+    <p><cpanel langprint="CGNBanned"></p>
+  </cpanelif>
   <br />
   </cpanelfeature>
 </div><!-- end body-content div -->

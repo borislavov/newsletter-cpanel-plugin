@@ -21,3 +21,5 @@ CGNNewsletterDescriptionCreated1: 'This account can be used only for sending new
 CGNNewsletterDescriptionCreated2: 'ICN.Bg do not guarantee that your outgoing IP address will not be blacklisted or your message will reach the final recipient. ICN.Bg only guarantee the technical option to send these messages. In case of any issues, which may appear from third parties (greylisting, blacklisted IP, restrictions from the mail server of the recipient), we cannot be held liable.'
 CGNTermsAgreement: 'I do agree with [output,url,_1,html,the terms,_type,offsite] of ICN.bg Newsletter service.'
 CGNAgree: 'You mus agree with the terms'
+CGNBanned: 'Due to misuse of the service cMailPro Newsletter in the past (sending spam messages to users, who have not subscribed for receiving them and/or other actions contrary to the Terms of Use of the service and the Bulgarian Ecommerce Law) your access to this service is restricted. We kindly apology for the inconvenience.'
+  
